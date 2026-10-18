@@ -11,7 +11,7 @@
 </style></head>
 <body><div id="game"></div>
 <div id="loading"><div><h2>Preparando a Jinx…</h2><small>Cargando modelo y partes articuladas</small><div id="error"></div></div></div>
-<div id="hud"><div class="top"><div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Animaciones por partes · movimiento 3D</div></div><div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div></div><div class="bottom"><div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar</div><div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div></div></div><div id="toast">Jinx</div>
+<div id="hud"><div class="top"><div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Orientación corregida · pies apoyados · brazos articulados · v4</div></div><div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div></div><div class="bottom"><div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar</div><div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div></div></div><div id="toast">Jinx</div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -26,15 +26,19 @@ const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStanda
 const platform=new THREE.Mesh(new THREE.CylinderGeometry(5.8,6.3,.25,64),new THREE.MeshStandardMaterial({color:0x292746,metalness:.2,roughness:.65}));platform.position.y=.05;platform.receiveShadow=true;platform.castShadow=true;scene.add(platform);const ring=new THREE.Mesh(new THREE.TorusGeometry(5.35,.035,8,100),new THREE.MeshBasicMaterial({color:0x8b5cf6}));ring.rotation.x=Math.PI/2;ring.position.y=.19;scene.add(ring);
 for(let i=0;i<14;i++){const a=i/14*Math.PI*2;const pillar=new THREE.Mesh(new THREE.BoxGeometry(.16,1.1,.16),new THREE.MeshStandardMaterial({color:i%2?0x5141a3:0x168ca7,emissive:i%2?0x1d0b4a:0x063a49,emissiveIntensity:.8}));pillar.position.set(Math.cos(a)*5.1,.55,Math.sin(a)*5.1);pillar.rotation.y=-a;scene.add(pillar)}
 const gems=[];for(let i=0;i<9;i++){const a=i/9*Math.PI*2;const g=new THREE.Mesh(new THREE.OctahedronGeometry(.22),new THREE.MeshStandardMaterial({color:i%2?0x22d3ee:0xc084fc,emissive:i%2?0x087e91:0x5b21b6,emissiveIntensity:1.3,metalness:.25,roughness:.2}));g.position.set(Math.cos(a)*3.7,.7,Math.sin(a)*3.7);g.userData.phase=i;scene.add(g);gems.push(g)}
-const player=new THREE.Group();scene.add(player);const joints={};let rigRoot=null, fallback=null, modelLoaded=false;
-const jointDefs={torso:{x:.5,y:1.6,z:0},head:{x:.5,y:2.08,z:0},hair:{x:.5,y:2.08,z:0},leftArm:{x:.35,y:1.72,z:.25},rightArm:{x:.35,y:1.72,z:-.25},leftLeg:{x:.35,y:1.43,z:.13},rightLeg:{x:.35,y:1.43,z:-.13}};
-function makeFallback(){fallback=new THREE.Group();const mat=c=>new THREE.MeshStandardMaterial({color:c});function block(w,h,d,c,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);m.castShadow=true;fallback.add(m);return m}block(.5,.7,.5,0x42204d,0,.0,0);block(.55,.55,.5,0x95604f,0,.62,0);block(.65,.3,.65,0x171be5,0,.88,0);block(.3,.65,.18,0x4d145e,-.18,-.55,-.07);block(.3,.65,.18,0x4d145e,.18,-.55,.07);block(.55,.16,.18,0x95604f,-.48,.2,0);block(.55,.16,.18,0x95604f,.48,.2,0);fallback.position.y=1;player.add(fallback);loading.style.display='none';toast('Se muestra personaje provisional; comprueba que el ZIP está completo.');}
+const player=new THREE.Group();player.position.y=.175;scene.add(player);const joints={};let rigRoot=null, fallback=null, modelLoaded=false;
+const jointDefs={torso:{x:.35,y:1.62,z:0},head:{x:.25,y:2.06,z:0},hair:{x:.5,y:2.12,z:0},leftArm:{x:.35,y:1.72,z:.25},rightArm:{x:.35,y:1.72,z:-.25},leftLeg:{x:.35,y:1.43,z:.13},rightLeg:{x:.35,y:1.43,z:-.13}};
+const GROUND_Y=.175; // cara superior de la plataforma: y=.05 + altura .125
+function makeFallback(){fallback=new THREE.Group();const mat=c=>new THREE.MeshStandardMaterial({color:c});function block(w,h,d,c,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);m.castShadow=true;fallback.add(m);return m}block(.5,.7,.5,0x42204d,0,.0,0);block(.55,.55,.5,0x95604f,0,.62,0);block(.65,.3,.65,0x171be5,0,.88,0);block(.3,.65,.18,0x4d145e,-.18,-.55,-.07);block(.3,.65,.18,0x4d145e,.18,-.55,.07);block(.55,.16,.18,0x95604f,-.48,.2,0);block(.55,.16,.18,0x95604f,.48,.2,0);fallback.position.y=.875;player.add(fallback);loading.style.display='none';toast('Se muestra personaje provisional; comprueba que el ZIP está completo.');}
 function toast(msg){const el=$('#toast');el.textContent=msg;el.style.opacity='1';clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.style.opacity='0',2200)}
 function showError(msg){errorBox.textContent=msg+'\nEl juego está configurado para usar el OBJ dividido en partes; ejecuta python -m http.server 8000 y abre http://localhost:8000.';makeFallback()}
 function setupRig(obj){
  const rawBox=new THREE.Box3().setFromObject(obj);const rawCenter=rawBox.getCenter(new THREE.Vector3());
  const meshes=[];obj.traverse(o=>{if(o.isMesh)meshes.push(o)});
- rigRoot=new THREE.Group();rigRoot.rotation.y=-Math.PI/2;player.add(rigRoot);
+ rigRoot=new THREE.Group();
+ // Corrección de orientación calibrada contra los ejes del modelo que se veía girado 90°
+ // al moverse (W=lado, D=atrás). Los movimientos del controlador ya usan -Z como frente.
+ rigRoot.rotation.y=0;player.add(rigRoot);
  for(const mesh of meshes){let name=mesh.name.toLowerCase();const part=Object.keys(jointDefs).find(k=>name.includes(k.toLowerCase()));if(!part)continue;const def=jointDefs[part];
    mesh.geometry=mesh.geometry.clone();mesh.geometry.translate(-def.x,-def.y,-def.z);mesh.castShadow=true;mesh.receiveShadow=true;
    // Each part has its own pivot, so arms and legs can swing instead of the whole model wobbling.
@@ -42,7 +46,7 @@ function setupRig(obj){
  }
  modelLoaded=Object.keys(joints).length>=5;
  if(!modelLoaded){player.remove(rigRoot);rigRoot=null;showError('No se encontraron las partes articuladas del modelo.');return;}
- loading.style.display='none';toast('Modelo articulado cargado');
+ loading.style.display='none';toast('Modelo articulado cargado · orientación corregida');
 }
 new MTLLoader().load('./jinx.mtl',materials=>{materials.preload();const loader=new OBJLoader();loader.setMaterials(materials);loader.load('./jinx_rig.obj',setupRig,undefined,e=>showError('No se pudo cargar jinx_rig.obj: '+e.message));},undefined,e=>showError('No se pudo cargar jinx.mtl: '+e.message));
 const keys={};let yaw=0,pitch=.22,drag=false,lastX=0,lastY=0;
@@ -53,7 +57,7 @@ const stateEl=$('#state'),staminaEl=$('#stamina');function setAction(a,t=.5){act
 function jump(){if(onGround){velocityY=7.2;onGround=false;setAction('jump',.72);toast('¡Salto!')}}
 function attack(){if(action==='attack'&&actionTimer>.18)return;attackSide*=-1;attackTimer=0;setAction('attack',.5);toast('¡Ataque!')}
 function dash(){if(energy>15){dashTime=.19;energy-=16;setAction('dash',.3);const dir=new THREE.Vector3(-Math.sin(player.rotation.y),0,-Math.cos(player.rotation.y));player.position.addScaledVector(dir,1.0);toast('¡Impulso!')}}
-function resetPlayer(){player.position.set(0,0,0);player.rotation.set(0,0,0);velocityY=0;onGround=true;energy=100;dashTime=0;danceOn=false;setAction('idle',0);$('#btnDance').classList.remove('active');toast('Posición reiniciada')}
+function resetPlayer(){player.position.set(0,GROUND_Y,0);player.rotation.set(0,0,0);velocityY=0;onGround=true;energy=100;dashTime=0;danceOn=false;setAction('idle',0);$('#btnDance').classList.remove('active');toast('Posición reiniciada')}
 $('#btnAttack').onclick=attack;$('#btnJump').onclick=jump;$('#btnDance').onclick=()=>{danceOn=!danceOn;$('#btnDance').classList.toggle('active',danceOn);setAction(danceOn?'dance':'idle',999999);toast(danceOn?'¡Que empiece el baile!':'Baile terminado')};$('#btnReset').onclick=resetPlayer;
 function smooth(t){t=THREE.MathUtils.clamp(t,0,1);return t*t*(3-2*t)}
 function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-(animate.prev||now))/1000,.04);animate.prev=now;const t=now*.001;
@@ -63,20 +67,35 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-(ani
  if(moving){const f=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));const r=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));const d=f.multiplyScalar(forward).add(r.multiplyScalar(side)).normalize();const sprint=(keys.ShiftLeft||keys.ShiftRight)&&energy>0;const speed=sprint?5.7:2.8;player.position.addScaledVector(d,speed*dt);player.rotation.y=Math.atan2(-d.x,-d.z);walkTime+=dt*(sprint?13:9);if(sprint)energy=Math.max(0,energy-dt*9);if(!danceOn&&action!=='attack'&&action!=='jump'&&action!=='dash')setAction('walk',0)}else if(!danceOn&&action==='walk')setAction('idle',0);
  if(actionTimer>0&&action!=='dance'){actionTimer-=dt;if(actionTimer<=0){if(action==='attack')attackTimer=0;setAction(danceOn?'dance':(moving?'walk':'idle'),danceOn?999999:0)}}
  if(dashTime>0)dashTime-=dt;
- velocityY-=18*dt;player.position.y+=velocityY*dt;if(player.position.y<=0){player.position.y=0;velocityY=0;onGround=true}
+ if(!onGround){velocityY-=18*dt;player.position.y+=velocityY*dt;if(player.position.y<=GROUND_Y){player.position.y=GROUND_Y;velocityY=0;onGround=true;setAction(danceOn?'dance':(moving?'walk':'idle'),danceOn?999999:0)}}
  const radius=Math.hypot(player.position.x,player.position.z);if(radius>4.7){player.position.x*=4.7/radius;player.position.z*=4.7/radius}
  const moveCycle=walkTime, movingPose=moving&&!danceOn&&action==='walk', jumping= !onGround || action==='jump';
  const phase=action==='attack'?1-THREE.MathUtils.clamp(actionTimer/.5,0,1):0;const punch=smooth(Math.sin(phase*Math.PI));
  const torso=joints.torso,head=joints.head,hair=joints.hair,lArm=joints.leftArm,rArm=joints.rightArm,lLeg=joints.leftLeg,rLeg=joints.rightLeg;
- if(torso){torso.position.y=(jointDefs.torso.y-1)+(movingPose?Math.abs(Math.sin(moveCycle))*.035:0)+Math.sin(t*2.2)*.012;torso.rotation.set(0,0,Math.sin(t*1.8)*.012);}
+ if(torso){torso.position.y=(jointDefs.torso.y-1)+(movingPose?Math.abs(Math.sin(moveCycle))*.035:0)+Math.sin(t*2.2)*.008;torso.rotation.set(movingPose?Math.sin(moveCycle*2)*.025:0,0, action==='dance'?Math.sin(t*5)*.10:(movingPose?Math.sin(moveCycle)*.055:Math.sin(t*1.8)*.012));}
  if(head){head.rotation.set(0,0,Math.sin(t*1.7)*.025);if(movingPose)head.rotation.z+=Math.sin(moveCycle*2)*.025;if(jumping)head.rotation.z-=.05;}
  if(hair){hair.rotation.set(0,Math.sin(t*2.8)*.025,Math.sin(t*1.8)*.018);if(movingPose){hair.rotation.y+=Math.sin(moveCycle-0.7)*.07;hair.rotation.z+=Math.sin(moveCycle*2-0.6)*.035}if(jumping)hair.rotation.z-=.06;}
- if(lArm){lArm.rotation.set(0,0,0);if(movingPose)lArm.rotation.y=Math.sin(moveCycle+Math.PI)*.4;if(jumping)lArm.rotation.z=-.48;if(action==='attack'&&attackSide>0){lArm.rotation.y=-1.22*punch;lArm.rotation.z=-.2*punch}if(action==='dance'){lArm.rotation.z=-.65+Math.sin(t*5)*.45;lArm.rotation.y=Math.sin(t*4)*.5}if(action==='dash'){lArm.rotation.y=-.75;lArm.rotation.z=-.12}}
- if(rArm){rArm.rotation.set(0,0,0);if(movingPose)rArm.rotation.y=Math.sin(moveCycle)*.4;if(jumping)rArm.rotation.z=.48;if(action==='attack'&&attackSide<0){rArm.rotation.y=1.22*punch;rArm.rotation.z=.2*punch}if(action==='dance'){rArm.rotation.z=.65+Math.sin(t*5+1)*.45;rArm.rotation.y=Math.sin(t*4+1)*.5}if(action==='dash'){rArm.rotation.y=.75;rArm.rotation.z=.12}}
- if(lLeg){lLeg.rotation.set(0,0,0);if(movingPose)lLeg.rotation.z=Math.sin(moveCycle)*.42;if(jumping)lLeg.rotation.z=-.22;if(action==='dance')lLeg.rotation.z=Math.sin(t*5)*.18;if(action==='attack')lLeg.rotation.z=-.035*punch}
- if(rLeg){rLeg.rotation.set(0,0,0);if(movingPose)rLeg.rotation.z=Math.sin(moveCycle+Math.PI)*.42;if(jumping)rLeg.rotation.z=.22;if(action==='dance')rLeg.rotation.z=Math.sin(t*5+Math.PI)*.18;if(action==='attack')rLeg.rotation.z=.035*punch}
- if(action==='dance'){player.position.y=Math.max(player.position.y,0)+Math.max(0,Math.sin(t*5))*0.025;}
- if(fallback){fallback.rotation.y=Math.sin(t*2)*.02;fallback.position.y=1+(movingPose?Math.abs(Math.sin(moveCycle))*.05:0)}
+ if(lArm){
+   // En el OBJ los brazos se extienden a lo largo del eje Z: X los sube/baja y Y los balancea.
+   lArm.rotation.set(.14,0,0);
+   if(movingPose)lArm.rotation.y=Math.sin(moveCycle+Math.PI)*.78;
+   if(jumping)lArm.rotation.x=-.92;
+   if(action==='attack'&&attackSide>0){lArm.rotation.y=-1.28*punch;lArm.rotation.x=-.12*punch;}
+   if(action==='dance'){lArm.rotation.x=-.7+Math.sin(t*5)*.52;lArm.rotation.y=Math.sin(t*4)*.55;}
+   if(action==='dash'){lArm.rotation.y=-.75;lArm.rotation.x=-.18;}
+ }
+ if(rArm){
+   rArm.rotation.set(-.14,0,0);
+   if(movingPose)rArm.rotation.y=Math.sin(moveCycle)*.78;
+   if(jumping)rArm.rotation.x=.92;
+   if(action==='attack'&&attackSide<0){rArm.rotation.y=1.28*punch;rArm.rotation.x=.12*punch;}
+   if(action==='dance'){rArm.rotation.x=.7+Math.sin(t*5+1)*.52;rArm.rotation.y=Math.sin(t*4+1)*.55;}
+   if(action==='dash'){rArm.rotation.y=.75;rArm.rotation.x=.18;}
+ }
+ if(lLeg){lLeg.rotation.set(0,0,0);if(movingPose)lLeg.rotation.z=Math.sin(moveCycle)*.55;if(jumping)lLeg.rotation.z=-.22;if(action==='dance')lLeg.rotation.z=Math.sin(t*5)*.18;if(action==='attack')lLeg.rotation.z=-.035*punch}
+ if(rLeg){rLeg.rotation.set(0,0,0);if(movingPose)rLeg.rotation.z=Math.sin(moveCycle+Math.PI)*.55;if(jumping)rLeg.rotation.z=.22;if(action==='dance')rLeg.rotation.z=Math.sin(t*5+Math.PI)*.18;if(action==='attack')rLeg.rotation.z=.035*punch}
+ if(rigRoot){rigRoot.position.y=(action==='dance'&&onGround?Math.max(0,Math.sin(t*5))*.035:0);}
+ if(fallback){fallback.rotation.y=Math.sin(t*2)*.02;fallback.position.y=.875+(movingPose?Math.abs(Math.sin(moveCycle))*.025:0)+(action==='dance'?Math.max(0,Math.sin(t*5))*.035:0)}
  const target=new THREE.Vector3(player.position.x,1.35+player.position.y,player.position.z);const dist=7.8,horiz=Math.cos(pitch)*dist;camera.position.set(target.x+Math.sin(yaw)*horiz,target.y+Math.sin(pitch)*dist+1.8,target.z+Math.cos(yaw)*horiz);camera.lookAt(target);renderer.render(scene,camera)
 }
 requestAnimationFrame(animate);addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});

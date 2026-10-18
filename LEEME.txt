@@ -1,4 +1,4 @@
-JINX — JUEGO 3D CON ANIMACIONES POR PARTES
+JINX — JUEGO 3D CON ANIMACIONES POR PARTES (v4)
 
 Archivos:
 - index.html: juego Three.js con movimiento, salto, ataque, baile, impulso y cámara orbital.
@@ -12,6 +12,12 @@ CÓMO EJECUTAR:
 3. Ejecuta: python -m http.server 8000
 4. Abre http://localhost:8000 en tu navegador.
 Se necesita conexión a internet para descargar Three.js desde un CDN.
+
+CORRECCIONES EN ESTA VERSIÓN
+- Se ajustó el desfase de 90 grados detectado al mover con WASD (W=lado, D=atrás, S=lado opuesto, A=frente).
+- Los pies comienzan apoyados sobre la plataforma.
+- El baile tiene un pequeño rebote sin elevar al personaje progresivamente.
+- Se corrigieron los ejes de giro de los brazos para que el salto y el baile cambien la postura de verdad.
 
 CONTROLES:
 WASD o flechas: moverse. Ratón arrastrando: girar cámara. Espacio: saltar.
