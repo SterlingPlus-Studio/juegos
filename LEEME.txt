@@ -1,0 +1,25 @@
+JINX — MINI AVENTURA 3D
+
+CONTENIDO
+- index.html: juego completo con controles y animaciones procedurales.
+- jinx.obj / jinx.mtl / jinx.png: modelo y textura originales exportados desde MagicaVoxel.
+
+CÓMO EJECUTAR
+1. Descomprime todo el ZIP en una carpeta.
+2. Abre una terminal dentro de esa carpeta.
+3. Ejecuta: python -m http.server 8000
+4. Abre http://localhost:8000 en Chrome, Edge o Firefox.
+
+Importante: el juego carga Three.js desde un CDN, por lo que necesita internet. No abras index.html directamente con doble clic, porque algunos navegadores bloquean la carga local del modelo.
+
+CONTROLES
+WASD / flechas: moverse
+Ratón arrastrando: girar la cámara
+Espacio: saltar
+J o botón Atacar: ataque
+Shift: impulso
+Baile: activar/desactivar baile
+R / Reiniciar: volver al centro
+
+NOTA SOBRE LAS ANIMACIONES
+El OBJ exportado no contiene esqueleto ni clips de animación. Por eso el juego anima el modelo completo con movimientos procedurales (caminar, salto, ataque, impulso y baile). Para animar brazos y piernas por separado, el personaje tendría que exportarse como modelo riggeado (por ejemplo GLB/GLTF con armature y animaciones).
