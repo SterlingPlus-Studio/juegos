@@ -1,4 +1,4 @@
-JINX — MINI AVENTURA 3D (v8)
+JINX — MINI AVENTURA 3D (v9)
 
 CONTENIDO
 - index.html: juego HTML 3D con movimientos y animaciones procedurales por partes.
@@ -6,7 +6,8 @@ CONTENIDO
 - jinx_rig.obj: versión del OBJ segmentada en torso, cabeza, cabello, brazos y piernas para animarlos por separado.
 
 CAMBIO EN ESTA VERSIÓN
-- Corregida la pose de reposo: brazos en diagonal suave, con los pivotes ligeramente más externos para que no queden tapados por el torso ni parezcan cortados.
+- Añadidos conectores voxel en los hombros para cubrir huecos entre el torso y los brazos y evitar el aspecto de brazos partidos.
+- Ajustado el ángulo de reposo para que los brazos queden completos y relajados, con una caída diagonal más natural.
 - El movimiento de brazos al caminar es más corto y relajado, sin giros laterales bruscos.
 - Al caminar, los brazos se balancean mientras permanecen inclinados hacia abajo.
 - Saltar, atacar, bailar e impulsarse tienen poses diferentes de brazos.

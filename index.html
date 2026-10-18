@@ -11,7 +11,7 @@
 </style></head>
 <body><div id="game"></div>
 <div id="loading"><div><h2>Preparando a Jinx…</h2><small>Cargando modelo y partes articuladas</small><div id="error"></div></div></div>
-<div id="hud"><div class="top"><div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Orientación corregida · pies apoyados · brazos relajados · v8</div></div><div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div></div><div class="bottom"><div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar</div><div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div></div></div><div id="toast">Jinx</div>
+<div id="hud"><div class="top"><div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Orientación corregida · pies apoyados · brazos relajados · v9 · brazos completos</div></div><div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div></div><div class="bottom"><div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar</div><div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div></div></div><div id="toast">Jinx</div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -44,6 +44,18 @@ function setupRig(obj){
    mesh.geometry=mesh.geometry.clone();mesh.geometry.translate(-def.x,-def.y,-def.z);mesh.castShadow=true;mesh.receiveShadow=true;
    // Each part has its own pivot, so arms and legs can swing instead of the whole model wobbling.
    const joint=new THREE.Group();joint.position.set(def.x-.5,def.y-1,def.z);joint.name=part+'_joint';joint.add(mesh);rigRoot.add(joint);joints[part]=joint;
+   // Relleno voxel en la unión del hombro: evita que el brazo parezca partido
+   // cuando cae en diagonal. Se mueve con el brazo y conserva el estilo pixel-art.
+   if(part==='leftArm'||part==='rightArm'){
+     const connector=new THREE.Mesh(
+       new THREE.BoxGeometry(.17,.20,.19),
+       new THREE.MeshStandardMaterial({color:0x9b5b83,roughness:.92})
+     );
+     connector.name=part+'_shoulder_connector';
+     connector.position.set(0,-.015,0);
+     connector.castShadow=true; connector.receiveShadow=true;
+     joint.add(connector);
+   }
  }
  modelLoaded=Object.keys(joints).length>=5;
  if(!modelLoaded){player.remove(rigRoot);rigRoot=null;showError('No se encontraron las partes articuladas del modelo.');return;}
@@ -79,7 +91,7 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-(ani
  if(lArm){
    // Reposo: caída diagonal suave para mantener visibles los brazos fuera del torso.
    // El pivote está un poco más hacia el hombro; el vaivén es mínimo y no separa las piezas visualmente.
-   const restLeft=.90;
+   const restLeft=.66;
    lArm.rotation.set(restLeft+Math.sin(t*1.25)*.018,.018+Math.sin(t*.72)*.012,0);
    if(movingPose){lArm.rotation.x=restLeft+Math.sin(moveCycle+Math.PI)*.12;lArm.rotation.y=Math.sin(moveCycle+Math.PI)*.20;}
    if(jumping){lArm.rotation.x=-1.02;lArm.rotation.y=-.04;}
@@ -89,7 +101,7 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-(ani
  }
  if(rArm){
    // El brazo derecho conserva el mismo ángulo de caída; solo se invierten los ejes laterales.
-   const restRight=-.90;
+   const restRight=-.66;
    rArm.rotation.set(restRight+Math.sin(t*1.25+.45)*.018,-.018+Math.sin(t*.72+.6)*.012,0);
    if(movingPose){rArm.rotation.x=restRight+Math.sin(moveCycle)*.12;rArm.rotation.y=Math.sin(moveCycle)*.20;}
    if(jumping){rArm.rotation.x=1.02;rArm.rotation.y=.04;}
