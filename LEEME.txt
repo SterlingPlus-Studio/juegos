@@ -1,8 +1,8 @@
-JINX — JUEGO 3D CON ANIMACIONES POR PARTES (v4)
+JINX — JUEGO 3D CON ANIMACIONES POR PARTES (v5)
 
 Archivos:
 - index.html: juego Three.js con movimiento, salto, ataque, baile, impulso y cámara orbital.
-- jinx_rig.obj: derivado del modelo original, dividido en torso, cabeza, cabello, brazos y piernas para poder animar las partes.
+- jinx_rig.obj: modelo dividido en torso, cabeza, cabello, brazos y piernas para animar por partes.
 - jinx.obj: modelo original sin modificar.
 - jinx.mtl / jinx.png: materiales y textura originales.
 
@@ -13,15 +13,14 @@ CÓMO EJECUTAR:
 4. Abre http://localhost:8000 en tu navegador.
 Se necesita conexión a internet para descargar Three.js desde un CDN.
 
-CORRECCIONES EN ESTA VERSIÓN
-- Se ajustó el desfase de 90 grados detectado al mover con WASD (W=lado, D=atrás, S=lado opuesto, A=frente).
-- Los pies comienzan apoyados sobre la plataforma.
-- El baile tiene un pequeño rebote sin elevar al personaje progresivamente.
-- Se corrigieron los ejes de giro de los brazos para que el salto y el baile cambien la postura de verdad.
+CORRECCIÓN v5:
+- Se giró el rig del modelo -90 grados porque el OBJ tiene la cara orientada hacia el eje -X, mientras que el controlador toma -Z como dirección frontal.
+- El giro del personaje al caminar sigue la dirección efectiva del movimiento WASD/flechas: W hacia delante, D a la derecha, S hacia atrás y A a la izquierda (relativo al mundo/cámara inicial).
+- Se conserva el nivelado vertical de los pies, los movimientos por partes y los controles existentes.
 
 CONTROLES:
 WASD o flechas: moverse. Ratón arrastrando: girar cámara. Espacio: saltar.
 J o botón Atacar: ataque. Shift: impulso. Baile: activar/desactivar. R: reiniciar.
 
 NOTA TÉCNICA:
-El archivo OBJ original no trae esqueleto ni clips de animación. Para esta versión, las caras del OBJ se repartieron en segmentos articulados basándose en su posición y colores, y el juego anima los pivotes de cabeza/cabello, brazos, torso y piernas. Es una mejora sobre mover el modelo entero, aunque no equivale a un rig profesional con huesos y deformación suave. Para animación de calidad de juego, lo ideal es preparar el personaje en Blender y exportarlo como GLB/GLTF con armature.
+El OBJ original no incluye esqueleto ni clips de animación. Las partes del modelo se animan desde pivotes separados; esto no equivale a un rig profesional con huesos y deformación suave. Para animaciones más naturales se recomienda preparar el personaje en Blender y exportarlo como GLB/GLTF con armature.

@@ -11,7 +11,7 @@
 </style></head>
 <body><div id="game"></div>
 <div id="loading"><div><h2>Preparando a Jinx…</h2><small>Cargando modelo y partes articuladas</small><div id="error"></div></div></div>
-<div id="hud"><div class="top"><div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Orientación corregida · pies apoyados · brazos articulados · v4</div></div><div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div></div><div class="bottom"><div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar</div><div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div></div></div><div id="toast">Jinx</div>
+<div id="hud"><div class="top"><div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Orientación corregida · pies apoyados · brazos articulados · v5</div></div><div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div></div><div class="bottom"><div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar</div><div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div></div></div><div id="toast">Jinx</div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -36,9 +36,10 @@ function setupRig(obj){
  const rawBox=new THREE.Box3().setFromObject(obj);const rawCenter=rawBox.getCenter(new THREE.Vector3());
  const meshes=[];obj.traverse(o=>{if(o.isMesh)meshes.push(o)});
  rigRoot=new THREE.Group();
- // Corrección de orientación calibrada contra los ejes del modelo que se veía girado 90°
- // al moverse (W=lado, D=atrás). Los movimientos del controlador ya usan -Z como frente.
- rigRoot.rotation.y=0;player.add(rigRoot);
+ // El OBJ tiene la cara hacia -X, mientras el controlador considera -Z como frente.
+ // Girar el rig 90° en sentido horario alinea la cara con W (movimiento hacia -Z).
+ // El yaw del jugador sigue calculándose a partir de la dirección real del movimiento.
+ rigRoot.rotation.y=-Math.PI/2;player.add(rigRoot);
  for(const mesh of meshes){let name=mesh.name.toLowerCase();const part=Object.keys(jointDefs).find(k=>name.includes(k.toLowerCase()));if(!part)continue;const def=jointDefs[part];
    mesh.geometry=mesh.geometry.clone();mesh.geometry.translate(-def.x,-def.y,-def.z);mesh.castShadow=true;mesh.receiveShadow=true;
    // Each part has its own pivot, so arms and legs can swing instead of the whole model wobbling.
