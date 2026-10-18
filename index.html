@@ -11,7 +11,7 @@
 </style></head>
 <body><div id="game"></div>
 <div id="loading"><div><h2>Preparando a Jinx…</h2><small>Cargando modelo y partes articuladas</small><div id="error"></div></div></div>
-<div id="hud"><div class="top"><div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Orientación corregida · pies apoyados · brazos articulados · v5</div></div><div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div></div><div class="bottom"><div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar</div><div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div></div></div><div id="toast">Jinx</div>
+<div id="hud"><div class="top"><div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Orientación corregida · pies apoyados · brazos abajo · v6</div></div><div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div></div><div class="bottom"><div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar</div><div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div></div></div><div id="toast">Jinx</div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -77,21 +77,25 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-(ani
  if(head){head.rotation.set(0,0,Math.sin(t*1.7)*.025);if(movingPose)head.rotation.z+=Math.sin(moveCycle*2)*.025;if(jumping)head.rotation.z-=.05;}
  if(hair){hair.rotation.set(0,Math.sin(t*2.8)*.025,Math.sin(t*1.8)*.018);if(movingPose){hair.rotation.y+=Math.sin(moveCycle-0.7)*.07;hair.rotation.z+=Math.sin(moveCycle*2-0.6)*.035}if(jumping)hair.rotation.z-=.06;}
  if(lArm){
-   // En el OBJ los brazos se extienden a lo largo del eje Z: X los sube/baja y Y los balancea.
-   lArm.rotation.set(.14,0,0);
-   if(movingPose)lArm.rotation.y=Math.sin(moveCycle+Math.PI)*.78;
-   if(jumping)lArm.rotation.x=-.92;
-   if(action==='attack'&&attackSide>0){lArm.rotation.y=-1.28*punch;lArm.rotation.x=-.12*punch;}
-   if(action==='dance'){lArm.rotation.x=-.7+Math.sin(t*5)*.52;lArm.rotation.y=Math.sin(t*4)*.55;}
-   if(action==='dash'){lArm.rotation.y=-.75;lArm.rotation.x=-.18;}
+   // Pose de repos: brazo izquierdo caído junto al cuerpo (el brazo se extiende por Z en el OBJ).
+   // Un ángulo X positivo baja el brazo de este lado; Y añade el balanceo adelante/atrás.
+   const restLeft=1.08;
+   lArm.rotation.set(restLeft+Math.sin(t*1.8)*.018,0,0);
+   if(movingPose){lArm.rotation.x=restLeft+Math.sin(moveCycle+Math.PI)*.15;lArm.rotation.y=Math.sin(moveCycle+Math.PI)*.62;}
+   if(jumping){lArm.rotation.x=-1.12;lArm.rotation.y=-.08;}
+   if(action==='attack'&&attackSide>0){lArm.rotation.x=restLeft-.12*punch;lArm.rotation.y=-1.28*punch;}
+   if(action==='dance'){lArm.rotation.x=-.82+Math.sin(t*5)*.34;lArm.rotation.y=Math.sin(t*4)*.55;}
+   if(action==='dash'){lArm.rotation.x=.82;lArm.rotation.y=-.72;}
  }
  if(rArm){
-   rArm.rotation.set(-.14,0,0);
-   if(movingPose)rArm.rotation.y=Math.sin(moveCycle)*.78;
-   if(jumping)rArm.rotation.x=.92;
-   if(action==='attack'&&attackSide<0){rArm.rotation.y=1.28*punch;rArm.rotation.x=.12*punch;}
-   if(action==='dance'){rArm.rotation.x=.7+Math.sin(t*5+1)*.52;rArm.rotation.y=Math.sin(t*4+1)*.55;}
-   if(action==='dash'){rArm.rotation.y=.75;rArm.rotation.x=.18;}
+   // El brazo derecho necesita el ángulo X opuesto para caer hacia abajo por estar al otro lado del eje Z.
+   const restRight=-1.08;
+   rArm.rotation.set(restRight+Math.sin(t*1.8+.4)*.018,0,0);
+   if(movingPose){rArm.rotation.x=restRight+Math.sin(moveCycle)*.15;rArm.rotation.y=Math.sin(moveCycle)*.62;}
+   if(jumping){rArm.rotation.x=1.12;rArm.rotation.y=.08;}
+   if(action==='attack'&&attackSide<0){rArm.rotation.x=restRight+.12*punch;rArm.rotation.y=1.28*punch;}
+   if(action==='dance'){rArm.rotation.x=.82+Math.sin(t*5+1)*.34;rArm.rotation.y=Math.sin(t*4+1)*.55;}
+   if(action==='dash'){rArm.rotation.x=-.82;rArm.rotation.y=.72;}
  }
  if(lLeg){lLeg.rotation.set(0,0,0);if(movingPose)lLeg.rotation.z=Math.sin(moveCycle)*.55;if(jumping)lLeg.rotation.z=-.22;if(action==='dance')lLeg.rotation.z=Math.sin(t*5)*.18;if(action==='attack')lLeg.rotation.z=-.035*punch}
  if(rLeg){rLeg.rotation.set(0,0,0);if(movingPose)rLeg.rotation.z=Math.sin(moveCycle+Math.PI)*.55;if(jumping)rLeg.rotation.z=.22;if(action==='dance')rLeg.rotation.z=Math.sin(t*5+Math.PI)*.18;if(action==='attack')rLeg.rotation.z=.035*punch}

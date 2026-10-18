@@ -1,26 +1,31 @@
-JINX — JUEGO 3D CON ANIMACIONES POR PARTES (v5)
+JINX — MINI AVENTURA 3D (v6)
 
-Archivos:
-- index.html: juego Three.js con movimiento, salto, ataque, baile, impulso y cámara orbital.
-- jinx_rig.obj: modelo dividido en torso, cabeza, cabello, brazos y piernas para animar por partes.
-- jinx.obj: modelo original sin modificar.
-- jinx.mtl / jinx.png: materiales y textura originales.
+CONTENIDO
+- index.html: juego HTML 3D con movimientos y animaciones procedurales por partes.
+- jinx.obj / jinx.mtl / jinx.png: modelo original y textura.
+- jinx_rig.obj: versión del OBJ segmentada en torso, cabeza, cabello, brazos y piernas para animarlos por separado.
 
-CÓMO EJECUTAR:
+CAMBIO EN ESTA VERSIÓN
+- Los brazos empiezan en una postura relajada hacia abajo, no en T.
+- Al caminar, los brazos se balancean mientras permanecen inclinados hacia abajo.
+- Saltar, atacar, bailar e impulsarse tienen poses diferentes de brazos.
+
+CÓMO EJECUTAR
 1. Extrae todos los archivos del ZIP en una carpeta.
 2. Abre una terminal dentro de esa carpeta.
 3. Ejecuta: python -m http.server 8000
-4. Abre http://localhost:8000 en tu navegador.
-Se necesita conexión a internet para descargar Three.js desde un CDN.
+4. Visita http://localhost:8000 en el navegador.
 
-CORRECCIÓN v5:
-- Se giró el rig del modelo -90 grados porque el OBJ tiene la cara orientada hacia el eje -X, mientras que el controlador toma -Z como dirección frontal.
-- El giro del personaje al caminar sigue la dirección efectiva del movimiento WASD/flechas: W hacia delante, D a la derecha, S hacia atrás y A a la izquierda (relativo al mundo/cámara inicial).
-- Se conserva el nivelado vertical de los pies, los movimientos por partes y los controles existentes.
+Se necesita internet para cargar Three.js desde el CDN. Es preferible ejecutar el servidor local en vez de abrir index.html directamente.
 
-CONTROLES:
-WASD o flechas: moverse. Ratón arrastrando: girar cámara. Espacio: saltar.
-J o botón Atacar: ataque. Shift: impulso. Baile: activar/desactivar. R: reiniciar.
+CONTROLES
+WASD / flechas: moverse
+Ratón arrastrando: girar la cámara
+Espacio: saltar
+J o botón Atacar: atacar
+Shift: impulso
+Baile: activar/desactivar el baile
+R / Reiniciar: volver al centro
 
-NOTA TÉCNICA:
-El OBJ original no incluye esqueleto ni clips de animación. Las partes del modelo se animan desde pivotes separados; esto no equivale a un rig profesional con huesos y deformación suave. Para animaciones más naturales se recomienda preparar el personaje en Blender y exportarlo como GLB/GLTF con armature.
+NOTA
+El archivo OBJ no incluye huesos ni animaciones profesionales. Esta versión mueve las partes segmentadas mediante pivotes programados; para obtener codos y hombros deformables haría falta rigging real en Blender y exportar GLB/GLTF.
