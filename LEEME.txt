@@ -6,7 +6,7 @@ CONTENIDO
 - jinx_rig.obj: versión del OBJ segmentada en torso, cabeza, cabello, brazos y piernas para animarlos por separado.
 
 CAMBIO EN ESTA VERSIÓN
-- Los brazos empiezan en una postura relajada hacia abajo, no en T.
+- En reposo, los brazos caen casi verticales junto al torso, con un balanceo suave y asimétrico para evitar la pose rígida.
 - Al caminar, los brazos se balancean mientras permanecen inclinados hacia abajo.
 - Saltar, atacar, bailar e impulsarse tienen poses diferentes de brazos.
 

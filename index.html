@@ -77,10 +77,10 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-(ani
  if(head){head.rotation.set(0,0,Math.sin(t*1.7)*.025);if(movingPose)head.rotation.z+=Math.sin(moveCycle*2)*.025;if(jumping)head.rotation.z-=.05;}
  if(hair){hair.rotation.set(0,Math.sin(t*2.8)*.025,Math.sin(t*1.8)*.018);if(movingPose){hair.rotation.y+=Math.sin(moveCycle-0.7)*.07;hair.rotation.z+=Math.sin(moveCycle*2-0.6)*.035}if(jumping)hair.rotation.z-=.06;}
  if(lArm){
-   // Pose de repos: brazo izquierdo caído junto al cuerpo (el brazo se extiende por Z en el OBJ).
-   // Un ángulo X positivo baja el brazo de este lado; Y añade el balanceo adelante/atrás.
-   const restLeft=1.08;
-   lArm.rotation.set(restLeft+Math.sin(t*1.8)*.018,0,0);
+   // Reposo natural: hombro relajado y brazo casi vertical, pegado al torso.
+   // El pequeño vaivén de X acompaña la respiración; Y lleva las manos levemente hacia delante.
+   const restLeft=1.43;
+   lArm.rotation.set(restLeft+Math.sin(t*1.25)*.025,.10+Math.sin(t*.72)*.035,0);
    if(movingPose){lArm.rotation.x=restLeft+Math.sin(moveCycle+Math.PI)*.15;lArm.rotation.y=Math.sin(moveCycle+Math.PI)*.62;}
    if(jumping){lArm.rotation.x=-1.12;lArm.rotation.y=-.08;}
    if(action==='attack'&&attackSide>0){lArm.rotation.x=restLeft-.12*punch;lArm.rotation.y=-1.28*punch;}
@@ -88,9 +88,9 @@ function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-(ani
    if(action==='dash'){lArm.rotation.x=.82;lArm.rotation.y=-.72;}
  }
  if(rArm){
-   // El brazo derecho necesita el ángulo X opuesto para caer hacia abajo por estar al otro lado del eje Z.
-   const restRight=-1.08;
-   rArm.rotation.set(restRight+Math.sin(t*1.8+.4)*.018,0,0);
+   // El derecho refleja la pose, con una variación ligera para que no parezca una pose rígida.
+   const restRight=-1.43;
+   rArm.rotation.set(restRight+Math.sin(t*1.25+.45)*.025,-.10+Math.sin(t*.72+.6)*.035,0);
    if(movingPose){rArm.rotation.x=restRight+Math.sin(moveCycle)*.15;rArm.rotation.y=Math.sin(moveCycle)*.62;}
    if(jumping){rArm.rotation.x=1.12;rArm.rotation.y=.08;}
    if(action==='attack'&&attackSide<0){rArm.rotation.x=restRight+.12*punch;rArm.rotation.y=1.28*punch;}
