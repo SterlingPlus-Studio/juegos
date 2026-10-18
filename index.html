@@ -1,108 +1,83 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jinx — Mini aventura 3D</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Jinx — Juego 3D</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#10101b;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#fff}
-#game{position:fixed;inset:0}canvas{display:block}
-#hud{position:fixed;inset:0;pointer-events:none;padding:18px;display:flex;flex-direction:column;justify-content:space-between}
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.panel{background:#111322c9;border:1px solid #ffffff24;border-radius:14px;padding:12px 15px;backdrop-filter:blur(8px);box-shadow:0 8px 30px #0003}
-h1{font-size:18px;margin:0 0 4px;letter-spacing:.04em}.sub{font-size:12px;color:#c5c7df}.status{font-size:13px;color:#a5f3fc}.bottom{display:flex;justify-content:space-between;align-items:end;gap:12px}.help{max-width:480px;font-size:12px;line-height:1.65;color:#d8d9eb}.help b{color:#fff}.actions{display:flex;gap:8px;pointer-events:auto;flex-wrap:wrap;justify-content:end}.actions button{background:#292b46;border:1px solid #ffffff30;color:white;padding:10px 13px;border-radius:10px;cursor:pointer;font-weight:650}.actions button:hover{background:#484b75}.actions button.active{background:#6d28d9}.bar{width:150px;height:6px;background:#ffffff24;border-radius:9px;overflow:hidden;margin-top:8px}.bar span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#22d3ee,#a78bfa)}
-#loading{position:fixed;inset:0;display:grid;place-items:center;background:#10101b;z-index:4;color:#fff;text-align:center;padding:24px}#loading small{display:block;color:#aeb1d2;margin-top:8px}#error{color:#fca5a5;max-width:650px;white-space:pre-wrap}
-@media(max-width:650px){#hud{padding:10px}.panel{padding:10px}.help{max-width:65%;font-size:11px}.top .sub{max-width:190px}.actions button{padding:8px;font-size:11px}.bar{width:100px}}
-</style>
-</head>
-<body>
-<div id="game"></div>
-<div id="loading"><div><h2>Preparando el mundo de Jinx…</h2><small>Si no carga, revisa tu conexión a internet.</small><div id="error"></div></div></div>
-<div id="hud">
-  <div class="top">
-    <div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Explora la arena y prueba sus movimientos</div></div>
-    <div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div>
-  </div>
-  <div class="bottom">
-    <div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar posición</div>
-    <div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div>
-  </div>
-</div>
-<script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
-</script>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#10101b;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#fff}#game{position:fixed;inset:0}canvas{display:block;touch-action:none}
+#hud{position:fixed;inset:0;pointer-events:none;padding:18px;display:flex;flex-direction:column;justify-content:space-between}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.panel{background:#111322c9;border:1px solid #ffffff24;border-radius:14px;padding:12px 15px;backdrop-filter:blur(8px);box-shadow:0 8px 30px #0003}h1{font-size:18px;margin:0 0 4px;letter-spacing:.04em}.sub{font-size:12px;color:#c5c7df}.status{font-size:13px;color:#a5f3fc}.bottom{display:flex;justify-content:space-between;align-items:end;gap:12px}.help{max-width:480px;font-size:12px;line-height:1.65;color:#d8d9eb}.help b{color:#fff}.actions{display:flex;gap:8px;pointer-events:auto;flex-wrap:wrap;justify-content:end}.actions button{background:#292b46;border:1px solid #ffffff30;color:white;padding:10px 13px;border-radius:10px;cursor:pointer;font-weight:650}.actions button:hover{background:#484b75}.actions button.active{background:#6d28d9}.bar{width:150px;height:6px;background:#ffffff24;border-radius:9px;overflow:hidden;margin-top:8px}.bar span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#22d3ee,#a78bfa)}
+#loading{position:fixed;inset:0;display:grid;place-items:center;background:#10101b;z-index:4;color:#fff;text-align:center;padding:24px}#loading small{display:block;color:#aeb1d2;margin-top:8px}#error{color:#fca5a5;max-width:650px;white-space:pre-wrap;margin-top:14px}#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#131527dd;border:1px solid #ffffff29;border-radius:20px;padding:8px 14px;font-size:12px;color:#d8d9eb;pointer-events:none;opacity:0;transition:opacity .25s}
+@media(max-width:650px){#hud{padding:10px}.panel{padding:10px}.help{max-width:58%;font-size:11px}.top .sub{max-width:190px}.actions{max-width:45%}.actions button{padding:8px;font-size:11px}.bar{width:100px}}
+</style></head>
+<body><div id="game"></div>
+<div id="loading"><div><h2>Preparando a Jinx…</h2><small>Cargando modelo y partes articuladas</small><div id="error"></div></div></div>
+<div id="hud"><div class="top"><div class="panel"><h1>JINX <span style="color:#c4b5fd">/ MINI AVENTURA</span></h1><div class="sub">Animaciones por partes · movimiento 3D</div></div><div class="panel"><div class="status" id="state">Estado: tranquila</div><div class="bar"><span id="stamina"></span></div><div class="sub">Energía</div></div></div><div class="bottom"><div class="panel help"><b>CONTROLES</b><br><b>W A S D</b> moverse · <b>Ratón</b> girar cámara · <b>Espacio</b> saltar<br><b>J / clic</b> ataque · <b>Shift</b> impulso · <b>R</b> reiniciar</div><div class="actions"><button id="btnAttack">⚔ Atacar (J)</button><button id="btnJump">↑ Saltar</button><button id="btnDance">✦ Baile</button><button id="btnReset">↻ Reiniciar</button></div></div></div><div id="toast">Jinx</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'three';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-
-const host=document.querySelector('#game'), loading=document.querySelector('#loading'), errorBox=document.querySelector('#error');
-const scene=new THREE.Scene(); scene.background=new THREE.Color(0x111326); scene.fog=new THREE.Fog(0x111326,18,48);
+import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
+import {MTLLoader} from 'three/addons/loaders/MTLLoader.js';
+const $=s=>document.querySelector(s), host=$('#game'),loading=$('#loading'),errorBox=$('#error');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x111326);scene.fog=new THREE.Fog(0x111326,18,48);
 const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,120);
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;host.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xbfcaff,0x25213a,2.0));
-const keyLight=new THREE.DirectionalLight(0xffffff,3.0);keyLight.position.set(5,10,6);keyLight.castShadow=true;keyLight.shadow.mapSize.set(1024,1024);scene.add(keyLight);
-const rim=new THREE.PointLight(0x6d5cff,32,18);rim.position.set(-4,4,-4);scene.add(rim);
-const cyan=new THREE.PointLight(0x16d9ff,18,12);cyan.position.set(4,3,4);scene.add(cyan);
-
-const floorMat=new THREE.MeshStandardMaterial({color:0x24243d,roughness:.88});
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),floorMat);floor.rotation.x=-Math.PI/2;floor.position.y=-.03;floor.receiveShadow=true;scene.add(floor);
-const grid=new THREE.GridHelper(100,100,0x6157a8,0x34344f);grid.position.y=-.015;scene.add(grid);
-const platform=new THREE.Mesh(new THREE.CylinderGeometry(5.8,6.3,.25,64),new THREE.MeshStandardMaterial({color:0x292746,metalness:.2,roughness:.65}));platform.position.y=.05;platform.receiveShadow=true;platform.castShadow=true;scene.add(platform);
-const ring=new THREE.Mesh(new THREE.TorusGeometry(5.35,.035,8,100),new THREE.MeshBasicMaterial({color:0x8b5cf6}));ring.rotation.x=Math.PI/2;ring.position.y=.19;scene.add(ring);
-for(let i=0;i<14;i++){const a=i/14*Math.PI*2;const pillar=new THREE.Mesh(new THREE.BoxGeometry(.16,1.1,.16),new THREE.MeshStandardMaterial({color:i%2?0x5141a3:0x168ca7,emissive:i%2?0x1d0b4a:0x063a49,emissiveIntensity:.8}));pillar.position.set(Math.cos(a)*5.1,.55,Math.sin(a)*5.1);pillar.rotation.y=-a;scene.add(pillar);}
-const gems=[];
-for(let i=0;i<9;i++){const a=i/9*Math.PI*2;const g=new THREE.Mesh(new THREE.OctahedronGeometry(.22),new THREE.MeshStandardMaterial({color:i%2?0x22d3ee:0xc084fc,emissive:i%2?0x087e91:0x5b21b6,emissiveIntensity:1.3,metalness:.25,roughness:.2}));g.position.set(Math.cos(a)*3.7,.7,Math.sin(a)*3.7);g.userData.phase=i;scene.add(g);gems.push(g);}
-const player=new THREE.Group();scene.add(player);
-let model=null, modelHeight=3, modelBase=0;
-const fallback=new THREE.Group();
-function makeFallback(){const mat=c=>new THREE.MeshStandardMaterial({color:c});const body=new THREE.Mesh(new THREE.BoxGeometry(.7,.9,.35),mat(0x42204d));body.position.y=1.35;fallback.add(body);const head=new THREE.Mesh(new THREE.BoxGeometry(.8,.8,.65),mat(0x95604f));head.position.y=2.15;fallback.add(head);const hair=new THREE.Mesh(new THREE.BoxGeometry(.95,.55,.75),mat(0x171be5));hair.position.set(0,2.55,-.02);fallback.add(hair);for(const x of [-.22,.22]){const leg=new THREE.Mesh(new THREE.BoxGeometry(.2,.75,.22),mat(0x4d145e));leg.position.set(x,.45,0);fallback.add(leg);const arm=new THREE.Mesh(new THREE.BoxGeometry(.85,.18,.2),mat(0x95604f));arm.position.set(x*2,1.55,0);fallback.add(arm)}player.add(fallback);return fallback;}
-const loader=new OBJLoader();
-new MTLLoader().load('./jinx.mtl',materials=>{materials.preload();loader.setMaterials(materials);loader.load('./jinx.obj',obj=>setupModel(obj),undefined,e=>showError('No se pudo abrir jinx.obj: '+e.message));},undefined,e=>showError('No se pudo abrir jinx.mtl: '+e.message));
-function showError(msg){errorBox.textContent=msg+'\\nSe usará un personaje provisional. Abre el juego mediante un servidor local si el navegador bloquea los archivos.';makeFallback();loading.style.display='none';}
-function setupModel(obj){
- model=obj;model.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true;if(n.material){n.material.side=THREE.DoubleSide;}}});
- const box=new THREE.Box3().setFromObject(model), size=box.getSize(new THREE.Vector3()), center=box.getCenter(new THREE.Vector3());
- modelHeight=Math.max(size.y,.1);modelBase=box.min.y;
- model.position.set(-center.x,-box.min.y,-center.z);
- // Mantener el tamaño original aproximado del modelo de MagicaVoxel.
- player.add(model);loading.style.display='none';
+scene.add(new THREE.HemisphereLight(0xbfcaff,0x25213a,2.0));const keyLight=new THREE.DirectionalLight(0xffffff,3);keyLight.position.set(5,10,6);keyLight.castShadow=true;keyLight.shadow.mapSize.set(1024,1024);scene.add(keyLight);const rim=new THREE.PointLight(0x6d5cff,32,18);rim.position.set(-4,4,-4);scene.add(rim);const cyan=new THREE.PointLight(0x16d9ff,18,12);cyan.position.set(4,3,4);scene.add(cyan);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:0x24243d,roughness:.88}));floor.rotation.x=-Math.PI/2;floor.position.y=-.03;floor.receiveShadow=true;scene.add(floor);const grid=new THREE.GridHelper(100,100,0x6157a8,0x34344f);grid.position.y=-.015;scene.add(grid);
+const platform=new THREE.Mesh(new THREE.CylinderGeometry(5.8,6.3,.25,64),new THREE.MeshStandardMaterial({color:0x292746,metalness:.2,roughness:.65}));platform.position.y=.05;platform.receiveShadow=true;platform.castShadow=true;scene.add(platform);const ring=new THREE.Mesh(new THREE.TorusGeometry(5.35,.035,8,100),new THREE.MeshBasicMaterial({color:0x8b5cf6}));ring.rotation.x=Math.PI/2;ring.position.y=.19;scene.add(ring);
+for(let i=0;i<14;i++){const a=i/14*Math.PI*2;const pillar=new THREE.Mesh(new THREE.BoxGeometry(.16,1.1,.16),new THREE.MeshStandardMaterial({color:i%2?0x5141a3:0x168ca7,emissive:i%2?0x1d0b4a:0x063a49,emissiveIntensity:.8}));pillar.position.set(Math.cos(a)*5.1,.55,Math.sin(a)*5.1);pillar.rotation.y=-a;scene.add(pillar)}
+const gems=[];for(let i=0;i<9;i++){const a=i/9*Math.PI*2;const g=new THREE.Mesh(new THREE.OctahedronGeometry(.22),new THREE.MeshStandardMaterial({color:i%2?0x22d3ee:0xc084fc,emissive:i%2?0x087e91:0x5b21b6,emissiveIntensity:1.3,metalness:.25,roughness:.2}));g.position.set(Math.cos(a)*3.7,.7,Math.sin(a)*3.7);g.userData.phase=i;scene.add(g);gems.push(g)}
+const player=new THREE.Group();scene.add(player);const joints={};let rigRoot=null, fallback=null, modelLoaded=false;
+const jointDefs={torso:{x:.5,y:1.6,z:0},head:{x:.5,y:2.08,z:0},hair:{x:.5,y:2.08,z:0},leftArm:{x:.35,y:1.72,z:.25},rightArm:{x:.35,y:1.72,z:-.25},leftLeg:{x:.35,y:1.43,z:.13},rightLeg:{x:.35,y:1.43,z:-.13}};
+function makeFallback(){fallback=new THREE.Group();const mat=c=>new THREE.MeshStandardMaterial({color:c});function block(w,h,d,c,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);m.castShadow=true;fallback.add(m);return m}block(.5,.7,.5,0x42204d,0,.0,0);block(.55,.55,.5,0x95604f,0,.62,0);block(.65,.3,.65,0x171be5,0,.88,0);block(.3,.65,.18,0x4d145e,-.18,-.55,-.07);block(.3,.65,.18,0x4d145e,.18,-.55,.07);block(.55,.16,.18,0x95604f,-.48,.2,0);block(.55,.16,.18,0x95604f,.48,.2,0);fallback.position.y=1;player.add(fallback);loading.style.display='none';toast('Se muestra personaje provisional; comprueba que el ZIP está completo.');}
+function toast(msg){const el=$('#toast');el.textContent=msg;el.style.opacity='1';clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.style.opacity='0',2200)}
+function showError(msg){errorBox.textContent=msg+'\nEl juego está configurado para usar el OBJ dividido en partes; ejecuta python -m http.server 8000 y abre http://localhost:8000.';makeFallback()}
+function setupRig(obj){
+ const rawBox=new THREE.Box3().setFromObject(obj);const rawCenter=rawBox.getCenter(new THREE.Vector3());
+ const meshes=[];obj.traverse(o=>{if(o.isMesh)meshes.push(o)});
+ rigRoot=new THREE.Group();rigRoot.rotation.y=-Math.PI/2;player.add(rigRoot);
+ for(const mesh of meshes){let name=mesh.name.toLowerCase();const part=Object.keys(jointDefs).find(k=>name.includes(k.toLowerCase()));if(!part)continue;const def=jointDefs[part];
+   mesh.geometry=mesh.geometry.clone();mesh.geometry.translate(-def.x,-def.y,-def.z);mesh.castShadow=true;mesh.receiveShadow=true;
+   // Each part has its own pivot, so arms and legs can swing instead of the whole model wobbling.
+   const joint=new THREE.Group();joint.position.set(def.x-.5,def.y-1,def.z);joint.name=part+'_joint';joint.add(mesh);rigRoot.add(joint);joints[part]=joint;
+ }
+ modelLoaded=Object.keys(joints).length>=5;
+ if(!modelLoaded){player.remove(rigRoot);rigRoot=null;showError('No se encontraron las partes articuladas del modelo.');return;}
+ loading.style.display='none';toast('Modelo articulado cargado');
 }
-const keys={};addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();if(e.code==='Space')jump();if(e.code==='KeyJ')attack();if(e.code==='KeyR')resetPlayer();if(e.code==='ShiftLeft'||e.code==='ShiftRight')dash();});
-addEventListener('keyup',e=>keys[e.code]=false);
-let yaw=0,pitch=.23,drag=false,lastX=0,lastY=0;renderer.domElement.addEventListener('pointerdown',e=>{if(e.button===0){drag=true;lastX=e.clientX;lastY=e.clientY;if(e.detail>1)attack();}});addEventListener('pointerup',()=>drag=false);
-addEventListener('pointermove',e=>{if(drag){yaw-=(e.clientX-lastX)*.006;pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lastY)*.003,-.05,.8);lastX=e.clientX;lastY=e.clientY;}});
-renderer.domElement.addEventListener('click',e=>{if(e.detail===1 && e.clientX>innerWidth*.7)attack();});
-let velocityY=0,onGround=true,action='idle',actionTimer=0,energy=100,walkTime=0,attackSide=1,dashTime=0;
-const stateEl=document.querySelector('#state'), staminaEl=document.querySelector('#stamina');
-function setAction(a,t=0.55){action=a;actionTimer=t;stateEl.textContent='Estado: '+({idle:'tranquila',walk:'caminando',jump:'saltando',attack:'atacando',dance:'bailando',dash:'impulso'})[a];}
-function jump(){if(onGround){velocityY=7.2;onGround=false;setAction('jump',.45)}}
-function attack(){attackSide*=-1;setAction('attack',.42);for(const g of gems){if(g.position.distanceTo(player.position)<2.4)g.material.emissiveIntensity=3;}}
-function dash(){if(energy>15){dashTime=.18;energy-=16;setAction('dash',.25);const dir=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));player.position.addScaledVector(dir,1.25)}}
-function resetPlayer(){player.position.set(0,0,0);velocityY=0;onGround=true;yaw=0;pitch=.23;energy=100;setAction('idle',0);}
-document.querySelector('#btnAttack').onclick=attack;document.querySelector('#btnJump').onclick=jump;document.querySelector('#btnDance').onclick=()=>setAction(action==='dance'?'idle':'dance',99999);document.querySelector('#btnReset').onclick=resetPlayer;
-let prev=performance.now();
-function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-prev)/1000,.04);prev=now;const t=now*.001;
-for(const g of gems){g.rotation.y+=dt*.9;g.position.y=.7+Math.sin(t*2+g.userData.phase)*.13;g.material.emissiveIntensity=1.1+Math.sin(t*3+g.userData.phase)*.3;}
-energy=Math.min(100,energy+dt*(dashTime>0?0:7));staminaEl.style.width=energy+'%';
-const forward=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),side=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
-let moving=forward!==0||side!==0;
-if(moving && action!=='attack'&&action!=='jump'&&action!=='dash'&&action!=='dance'){action='walk';stateEl.textContent='Estado: caminando';}
-if(!moving && action==='walk'){action='idle';stateEl.textContent='Estado: tranquila';}
-if(actionTimer>0 && action!=='dance'){actionTimer-=dt;if(actionTimer<=0){action=moving?'walk':'idle';stateEl.textContent='Estado: '+(moving?'caminando':'tranquila');}}
-if(dashTime>0)dashTime-=dt;
-if(moving){const speed=(keys.ShiftLeft||keys.ShiftRight)&&energy>0?7.4:3.2;const d=new THREE.Vector3(side,0,-forward);if(d.lengthSq()>0)d.normalize().applyAxisAngle(new THREE.Vector3(0,1,0),yaw);player.position.addScaledVector(d,speed*dt);if(action==='walk'||action==='idle')player.rotation.y=Math.atan2(d.x,d.z);walkTime+=dt*10;}
-velocityY-=18*dt;player.position.y+=velocityY*dt;if(player.position.y<=0){player.position.y=0;velocityY=0;onGround=true;}
-const radius=Math.hypot(player.position.x,player.position.z);if(radius>4.65){player.position.x*=4.65/radius;player.position.z*=4.65/radius;}
-if(model){model.position.y=0;model.rotation.set(0,0,0);model.scale.setScalar(1);}
-const bob=(action==='walk'?Math.abs(Math.sin(walkTime))*.075:0)+(action==='idle'?Math.sin(t*2)*.018:0);
-if(model){model.position.y=bob;if(action==='walk')model.rotation.z=Math.sin(walkTime)*.035;if(action==='jump')model.rotation.x=-.12;if(action==='attack'){model.rotation.y=Math.sin((.42-actionTimer)*Math.PI*2)*.28;model.rotation.z=Math.sin((.42-actionTimer)*Math.PI)*-.18;}if(action==='dance'){model.rotation.y=Math.sin(t*5)*.45;model.rotation.z=Math.sin(t*10)*.09;model.position.y+=Math.abs(Math.sin(t*5))*.1;}}
-else {fallback.position.y=bob;if(action==='dance')fallback.rotation.y=Math.sin(t*5)*.4;else fallback.rotation.y=0;}
-if(action==='attack'&&actionTimer>0){player.rotation.y+=attackSide*dt*1.7;}
-const target=new THREE.Vector3(player.position.x,1.3+player.position.y,player.position.z);
-const camDist=7.8;const horiz=Math.cos(pitch)*camDist;camera.position.set(target.x+Math.sin(yaw)*horiz,target.y+Math.sin(pitch)*camDist+2.2,target.z+Math.cos(yaw)*horiz);camera.lookAt(target);
-renderer.render(scene,camera);
+new MTLLoader().load('./jinx.mtl',materials=>{materials.preload();const loader=new OBJLoader();loader.setMaterials(materials);loader.load('./jinx_rig.obj',setupRig,undefined,e=>showError('No se pudo cargar jinx_rig.obj: '+e.message));},undefined,e=>showError('No se pudo cargar jinx.mtl: '+e.message));
+const keys={};let yaw=0,pitch=.22,drag=false,lastX=0,lastY=0;
+addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();if(e.code==='Space')jump();if(e.code==='KeyJ')attack();if(e.code==='KeyR')resetPlayer();if(e.code==='ShiftLeft'||e.code==='ShiftRight')dash()});addEventListener('keyup',e=>keys[e.code]=false);
+renderer.domElement.addEventListener('pointerdown',e=>{if(e.button===0){drag=true;lastX=e.clientX;lastY=e.clientY}});addEventListener('pointerup',()=>drag=false);addEventListener('pointermove',e=>{if(drag){yaw-=(e.clientX-lastX)*.006;pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lastY)*.003,-.05,.8);lastX=e.clientX;lastY=e.clientY}});renderer.domElement.addEventListener('dblclick',attack);
+let velocityY=0,onGround=true,action='idle',actionTimer=0,energy=100,walkTime=0,dashTime=0,attackSide=1,attackTimer=0,wasMoving=false,danceOn=false;
+const stateEl=$('#state'),staminaEl=$('#stamina');function setAction(a,t=.5){action=a;actionTimer=t;const labels={idle:'tranquila',walk:'caminando',jump:'saltando',attack:'atacando',dance:'bailando',dash:'impulso'};stateEl.textContent='Estado: '+(labels[a]||a)}
+function jump(){if(onGround){velocityY=7.2;onGround=false;setAction('jump',.72);toast('¡Salto!')}}
+function attack(){if(action==='attack'&&actionTimer>.18)return;attackSide*=-1;attackTimer=0;setAction('attack',.5);toast('¡Ataque!')}
+function dash(){if(energy>15){dashTime=.19;energy-=16;setAction('dash',.3);const dir=new THREE.Vector3(-Math.sin(player.rotation.y),0,-Math.cos(player.rotation.y));player.position.addScaledVector(dir,1.0);toast('¡Impulso!')}}
+function resetPlayer(){player.position.set(0,0,0);player.rotation.set(0,0,0);velocityY=0;onGround=true;energy=100;dashTime=0;danceOn=false;setAction('idle',0);$('#btnDance').classList.remove('active');toast('Posición reiniciada')}
+$('#btnAttack').onclick=attack;$('#btnJump').onclick=jump;$('#btnDance').onclick=()=>{danceOn=!danceOn;$('#btnDance').classList.toggle('active',danceOn);setAction(danceOn?'dance':'idle',999999);toast(danceOn?'¡Que empiece el baile!':'Baile terminado')};$('#btnReset').onclick=resetPlayer;
+function smooth(t){t=THREE.MathUtils.clamp(t,0,1);return t*t*(3-2*t)}
+function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-(animate.prev||now))/1000,.04);animate.prev=now;const t=now*.001;
+ for(const g of gems){g.rotation.y+=dt*.9;g.position.y=.7+Math.sin(t*2+g.userData.phase)*.13;g.material.emissiveIntensity=1.1+Math.sin(t*3+g.userData.phase)*.3}
+ energy=Math.min(100,energy+dt*(dashTime>0?0:7));staminaEl.style.width=energy+'%';
+ const forward=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),side=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);const moving=(forward!==0||side!==0);
+ if(moving){const f=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));const r=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));const d=f.multiplyScalar(forward).add(r.multiplyScalar(side)).normalize();const sprint=(keys.ShiftLeft||keys.ShiftRight)&&energy>0;const speed=sprint?5.7:2.8;player.position.addScaledVector(d,speed*dt);player.rotation.y=Math.atan2(-d.x,-d.z);walkTime+=dt*(sprint?13:9);if(sprint)energy=Math.max(0,energy-dt*9);if(!danceOn&&action!=='attack'&&action!=='jump'&&action!=='dash')setAction('walk',0)}else if(!danceOn&&action==='walk')setAction('idle',0);
+ if(actionTimer>0&&action!=='dance'){actionTimer-=dt;if(actionTimer<=0){if(action==='attack')attackTimer=0;setAction(danceOn?'dance':(moving?'walk':'idle'),danceOn?999999:0)}}
+ if(dashTime>0)dashTime-=dt;
+ velocityY-=18*dt;player.position.y+=velocityY*dt;if(player.position.y<=0){player.position.y=0;velocityY=0;onGround=true}
+ const radius=Math.hypot(player.position.x,player.position.z);if(radius>4.7){player.position.x*=4.7/radius;player.position.z*=4.7/radius}
+ const moveCycle=walkTime, movingPose=moving&&!danceOn&&action==='walk', jumping= !onGround || action==='jump';
+ const phase=action==='attack'?1-THREE.MathUtils.clamp(actionTimer/.5,0,1):0;const punch=smooth(Math.sin(phase*Math.PI));
+ const torso=joints.torso,head=joints.head,hair=joints.hair,lArm=joints.leftArm,rArm=joints.rightArm,lLeg=joints.leftLeg,rLeg=joints.rightLeg;
+ if(torso){torso.position.y=(jointDefs.torso.y-1)+(movingPose?Math.abs(Math.sin(moveCycle))*.035:0)+Math.sin(t*2.2)*.012;torso.rotation.set(0,0,Math.sin(t*1.8)*.012);}
+ if(head){head.rotation.set(0,0,Math.sin(t*1.7)*.025);if(movingPose)head.rotation.z+=Math.sin(moveCycle*2)*.025;if(jumping)head.rotation.z-=.05;}
+ if(hair){hair.rotation.set(0,Math.sin(t*2.8)*.025,Math.sin(t*1.8)*.018);if(movingPose){hair.rotation.y+=Math.sin(moveCycle-0.7)*.07;hair.rotation.z+=Math.sin(moveCycle*2-0.6)*.035}if(jumping)hair.rotation.z-=.06;}
+ if(lArm){lArm.rotation.set(0,0,0);if(movingPose)lArm.rotation.y=Math.sin(moveCycle+Math.PI)*.4;if(jumping)lArm.rotation.z=-.48;if(action==='attack'&&attackSide>0){lArm.rotation.y=-1.22*punch;lArm.rotation.z=-.2*punch}if(action==='dance'){lArm.rotation.z=-.65+Math.sin(t*5)*.45;lArm.rotation.y=Math.sin(t*4)*.5}if(action==='dash'){lArm.rotation.y=-.75;lArm.rotation.z=-.12}}
+ if(rArm){rArm.rotation.set(0,0,0);if(movingPose)rArm.rotation.y=Math.sin(moveCycle)*.4;if(jumping)rArm.rotation.z=.48;if(action==='attack'&&attackSide<0){rArm.rotation.y=1.22*punch;rArm.rotation.z=.2*punch}if(action==='dance'){rArm.rotation.z=.65+Math.sin(t*5+1)*.45;rArm.rotation.y=Math.sin(t*4+1)*.5}if(action==='dash'){rArm.rotation.y=.75;rArm.rotation.z=.12}}
+ if(lLeg){lLeg.rotation.set(0,0,0);if(movingPose)lLeg.rotation.z=Math.sin(moveCycle)*.42;if(jumping)lLeg.rotation.z=-.22;if(action==='dance')lLeg.rotation.z=Math.sin(t*5)*.18;if(action==='attack')lLeg.rotation.z=-.035*punch}
+ if(rLeg){rLeg.rotation.set(0,0,0);if(movingPose)rLeg.rotation.z=Math.sin(moveCycle+Math.PI)*.42;if(jumping)rLeg.rotation.z=.22;if(action==='dance')rLeg.rotation.z=Math.sin(t*5+Math.PI)*.18;if(action==='attack')rLeg.rotation.z=.035*punch}
+ if(action==='dance'){player.position.y=Math.max(player.position.y,0)+Math.max(0,Math.sin(t*5))*0.025;}
+ if(fallback){fallback.rotation.y=Math.sin(t*2)*.02;fallback.position.y=1+(movingPose?Math.abs(Math.sin(moveCycle))*.05:0)}
+ const target=new THREE.Vector3(player.position.x,1.35+player.position.y,player.position.z);const dist=7.8,horiz=Math.cos(pitch)*dist;camera.position.set(target.x+Math.sin(yaw)*horiz,target.y+Math.sin(pitch)*dist+1.8,target.z+Math.cos(yaw)*horiz);camera.lookAt(target);renderer.render(scene,camera)
 }
-requestAnimationFrame(animate);
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
-</script>
-</body></html>
+requestAnimationFrame(animate);addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script></body></html>

@@ -1,25 +1,21 @@
-JINX — MINI AVENTURA 3D
+JINX — JUEGO 3D CON ANIMACIONES POR PARTES
 
-CONTENIDO
-- index.html: juego completo con controles y animaciones procedurales.
-- jinx.obj / jinx.mtl / jinx.png: modelo y textura originales exportados desde MagicaVoxel.
+Archivos:
+- index.html: juego Three.js con movimiento, salto, ataque, baile, impulso y cámara orbital.
+- jinx_rig.obj: derivado del modelo original, dividido en torso, cabeza, cabello, brazos y piernas para poder animar las partes.
+- jinx.obj: modelo original sin modificar.
+- jinx.mtl / jinx.png: materiales y textura originales.
 
-CÓMO EJECUTAR
-1. Descomprime todo el ZIP en una carpeta.
+CÓMO EJECUTAR:
+1. Extrae todos los archivos del ZIP en una carpeta.
 2. Abre una terminal dentro de esa carpeta.
 3. Ejecuta: python -m http.server 8000
-4. Abre http://localhost:8000 en Chrome, Edge o Firefox.
+4. Abre http://localhost:8000 en tu navegador.
+Se necesita conexión a internet para descargar Three.js desde un CDN.
 
-Importante: el juego carga Three.js desde un CDN, por lo que necesita internet. No abras index.html directamente con doble clic, porque algunos navegadores bloquean la carga local del modelo.
+CONTROLES:
+WASD o flechas: moverse. Ratón arrastrando: girar cámara. Espacio: saltar.
+J o botón Atacar: ataque. Shift: impulso. Baile: activar/desactivar. R: reiniciar.
 
-CONTROLES
-WASD / flechas: moverse
-Ratón arrastrando: girar la cámara
-Espacio: saltar
-J o botón Atacar: ataque
-Shift: impulso
-Baile: activar/desactivar baile
-R / Reiniciar: volver al centro
-
-NOTA SOBRE LAS ANIMACIONES
-El OBJ exportado no contiene esqueleto ni clips de animación. Por eso el juego anima el modelo completo con movimientos procedurales (caminar, salto, ataque, impulso y baile). Para animar brazos y piernas por separado, el personaje tendría que exportarse como modelo riggeado (por ejemplo GLB/GLTF con armature y animaciones).
+NOTA TÉCNICA:
+El archivo OBJ original no trae esqueleto ni clips de animación. Para esta versión, las caras del OBJ se repartieron en segmentos articulados basándose en su posición y colores, y el juego anima los pivotes de cabeza/cabello, brazos, torso y piernas. Es una mejora sobre mover el modelo entero, aunque no equivale a un rig profesional con huesos y deformación suave. Para animación de calidad de juego, lo ideal es preparar el personaje en Blender y exportarlo como GLB/GLTF con armature.
